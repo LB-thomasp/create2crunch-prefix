@@ -45,6 +45,8 @@ pub struct Config {
     pub gpu_device: u8,
     pub leading_zeroes_threshold: u8,
     pub total_zeroes_threshold: u8,
+    pub has_paid: bool,
+    pub has_721C: bool,
 }
 
 /// Validate the provided arguments and construct the Config struct.
@@ -74,6 +76,14 @@ impl Config {
         let total_zeroes_threshold_string = match args.next() {
             Some(arg) => arg,
             None => String::from("5"),
+        };
+        let has_paid_string = match args.next() {
+            Some(arg) => arg,
+            None => String::from("false"),
+        };
+        let has_721C_string = match args.next() {
+            Some(arg) => arg,
+            None => String::from("false"),
         };
 
         // convert main arguments from hex string to vector of bytes
@@ -108,6 +118,12 @@ impl Config {
         let Ok(total_zeroes_threshold) = total_zeroes_threshold_string.parse::<u8>() else {
             return Err("invalid total zeroes threshold value supplied");
         };
+        let Ok(has_paid) = has_paid_string.parse::<bool>() else {
+            return Err("invalid has paid value supplied");
+        };
+        let Ok(has_721C) = has_721C_string.parse::<bool>() else {
+            return Err("invalid has 721C value supplied");
+        };
 
         if leading_zeroes_threshold > 20 {
             return Err("invalid value for leading zeroes threshold argument. (valid: 0..=20)");
@@ -123,6 +139,8 @@ impl Config {
             gpu_device,
             leading_zeroes_threshold,
             total_zeroes_threshold,
+            has_paid,
+            has_721C,
         })
     }
 }
@@ -565,10 +583,14 @@ fn mk_kernel_src(config: &Config) -> String {
     for (i, x) in factory.chain(caller).enumerate().chain(hash) {
         writeln!(src, "#define S_{} {}u", i + 1, x).unwrap();
     }
-    let lz = config.leading_zeroes_threshold;
-    writeln!(src, "#define LEADING_ZEROES {lz}").unwrap();
     let tz = config.total_zeroes_threshold;
     writeln!(src, "#define TOTAL_ZEROES {tz}").unwrap();
+    let tz = config.total_zeroes_threshold;
+    writeln!(src, "#define TOTAL_ZEROES {tz}").unwrap();
+    let hp = config.has_paid ? 1 : 0;
+    writeln!(src, "#define HAS_PAID {hp}").unwrap();
+    let h7 = config.has_721C ? 1 : 0;
+    writeln!(src, "#define HAS_721C {h7}").unwrap();
 
     src.push_str(KERNEL_SRC);
 

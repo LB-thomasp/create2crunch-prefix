@@ -196,6 +196,9 @@ static inline void keccakf(ulong *a)
   (!(d[16])) + (!(d[17])) + (!(d[18])) + (!(d[19])) \
 >= TOTAL_ZEROES)
 
+#define has721CPrefix(d) ( (d[0] == 0x72 && d[1] == 0x1C) )
+#define has9A1DPrefix(d) ( (d[0] == 0x9A && d[1] == 0x1D) )
+
 #if LEADING_ZEROES == 8
 #define hasLeading(d) (!(((uint*)d)[0]) && !(((uint*)d)[1]))
 #elif LEADING_ZEROES == 7
@@ -353,9 +356,14 @@ __kernel void hashMessage(
 
   // determine if the address meets the constraints
   if (
-    hasLeading(digest) 
+#if HAS_PAID
+    has9A1DPrefix(digest)
+#endif
+#if HAS_721C
+    has721CPrefix(digest)
+#endif
 #if TOTAL_ZEROES <= 20
-    || hasTotal(digest)
+    && hasTotal(digest)
 #endif
   ) {
     // To be honest, if we are using OpenCL, 
