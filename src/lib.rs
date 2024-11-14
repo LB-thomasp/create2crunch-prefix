@@ -583,6 +583,8 @@ fn mk_kernel_src(config: &Config) -> String {
     for (i, x) in factory.chain(caller).enumerate().chain(hash) {
         writeln!(src, "#define S_{} {}u", i + 1, x).unwrap();
     }
+    let lz = config.leading_zeroes_threshold;
+    writeln!(src, "#define LEADING_ZEROES {lz}").unwrap();
     let tz = config.total_zeroes_threshold;
     writeln!(src, "#define TOTAL_ZEROES {tz}").unwrap();
     let tz = config.total_zeroes_threshold;
