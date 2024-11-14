@@ -587,10 +587,20 @@ fn mk_kernel_src(config: &Config) -> String {
     writeln!(src, "#define TOTAL_ZEROES {tz}").unwrap();
     let tz = config.total_zeroes_threshold;
     writeln!(src, "#define TOTAL_ZEROES {tz}").unwrap();
-    let hp = config.has_paid ? 1 : 0;
-    writeln!(src, "#define HAS_PAID {hp}").unwrap();
-    let h7 = config.has_721C ? 1 : 0;
-    writeln!(src, "#define HAS_721C {h7}").unwrap();
+    if config.has_paid {
+        let hp = 1;
+        writeln!(src, "#define HAS_PAID {hp}").unwrap();
+    } else {
+        let hp = 0;
+        writeln!(src, "#define HAS_PAID {hp}").unwrap();
+    }
+    if config.has_721C {
+        let h7 = 1;
+        writeln!(src, "#define HAS_721C {h7}").unwrap();
+    } else {
+        let h7 = 0;
+        writeln!(src, "#define HAS_721C {h7}").unwrap();
+    }
 
     src.push_str(KERNEL_SRC);
 

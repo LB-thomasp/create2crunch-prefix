@@ -358,12 +358,16 @@ __kernel void hashMessage(
   if (
 #if HAS_PAID
     has9A1DPrefix(digest)
-#endif
-#if HAS_721C
+#elif HAS_721C
     has721CPrefix(digest)
+#else 
+    hasLeading(digest)
 #endif
-#if TOTAL_ZEROES <= 20
+
+#if TOTAL_ZEROES <= 20 && (HAS_721C || HAS_PAID)
     && hasTotal(digest)
+#elif TOTAL_ZEROES <= 20
+    || hasTotal(digest)
 #endif
   ) {
     // To be honest, if we are using OpenCL, 
