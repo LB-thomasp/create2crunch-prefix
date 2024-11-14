@@ -46,7 +46,7 @@ pub struct Config {
     pub leading_zeroes_threshold: u8,
     pub total_zeroes_threshold: u8,
     pub has_paid: bool,
-    pub has_721C: bool,
+    pub has_721_c: bool,
 }
 
 /// Validate the provided arguments and construct the Config struct.
@@ -81,7 +81,7 @@ impl Config {
             Some(arg) => arg,
             None => String::from("false"),
         };
-        let has_721C_string = match args.next() {
+        let has_721_c_string = match args.next() {
             Some(arg) => arg,
             None => String::from("false"),
         };
@@ -121,7 +121,7 @@ impl Config {
         let Ok(has_paid) = has_paid_string.parse::<bool>() else {
             return Err("invalid has paid value supplied");
         };
-        let Ok(has_721C) = has_721C_string.parse::<bool>() else {
+        let Ok(has_721_c) = has_721_c_string.parse::<bool>() else {
             return Err("invalid has 721C value supplied");
         };
 
@@ -140,7 +140,7 @@ impl Config {
             leading_zeroes_threshold,
             total_zeroes_threshold,
             has_paid,
-            has_721C,
+            has_721_c,
         })
     }
 }
@@ -596,7 +596,7 @@ fn mk_kernel_src(config: &Config) -> String {
         let hp = 0;
         writeln!(src, "#define HAS_PAID {hp}").unwrap();
     }
-    if config.has_721C {
+    if config.has_721_c {
         let h7 = 1;
         writeln!(src, "#define HAS_721C {h7}").unwrap();
     } else {
